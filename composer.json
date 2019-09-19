@@ -1,0 +1,22 @@
+{
+  "name": "clover-swoole/database",
+  "description": "基于illuminate/database 适用于Swoole 的数据库适配器",
+  "license": "MIT",
+  "homepage": "https://github.com/CloverSwoole/database",
+  "keywords": ["CloverSwoole","laravel", "database", "sql", "orm","Swoole"],
+  "authors": [
+    {
+      "name": "戒尺",
+      "email": "itxiao6@qq.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "illuminate/database": "5.8.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "CloverSwoole\\Database\\": "src"
+    }
+  }
+}
