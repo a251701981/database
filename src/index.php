@@ -3,8 +3,8 @@
 use Illuminate\Container\Container;
 use CloverSwoole\Database\ConfigInterface;
 use CloverSwoole\Database\ContainerManager;
-include_once __DIR__."/../vendor/autoload.php";
 
+include_once __DIR__."/../vendor/autoload.php";
 /**
  * 数据库配置
  * Class DbConfig

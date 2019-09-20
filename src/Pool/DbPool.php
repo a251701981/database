@@ -1,12 +1,15 @@
 <?php
+
 namespace CloverSwoole\Database\Pool;
 
-use Illuminate\Container\Container;
 use CloverSwoole\Database\ConfigInterface;
-use \CloverSwoole\Database\ConnectionInterface;
 use CloverSwoole\Database\Connection;
-use \CloverSwoole\Database\Frequency;
-use \CloverSwoole\Database\Utils\Arr;
+use CloverSwoole\Database\ConnectionInterface;
+use CloverSwoole\Database\Frequency;
+use CloverSwoole\Database\Utils\Arr;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use InvalidArgumentException;
 
 /**
  * DB 连接池
@@ -30,7 +33,7 @@ class DbPool extends Pool
      * DbPool constructor.
      * @param Container $container
      * @param string $name
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function __construct(Container $container, string $name)
     {
@@ -49,8 +52,8 @@ class DbPool extends Pool
         /**
          * 判断连接的配置是否存在
          */
-        if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+        if (!$config->has($key)) {
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
         /**
          * 重写配置内的名称
@@ -67,7 +70,7 @@ class DbPool extends Pool
         /**
          * 实例化XXX
          */
-        $this->frequency = $container -> make(Frequency::class);
+        $this->frequency = $container->make(Frequency::class);
         /**
          * 实例池
          */
@@ -77,8 +80,9 @@ class DbPool extends Pool
     /**
      * 创建连接
      * @return ConnectionInterface
+     * @throws BindingResolutionException
      */
-    protected function createConnection():ConnectionInterface
+    protected function createConnection(): ConnectionInterface
     {
         return new Connection($this->container, $this, $this->config);
     }

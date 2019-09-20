@@ -2,6 +2,8 @@
 namespace CloverSwoole\Database;
 use Illuminate\Container\Container;
 use CloverSwoole\Database\Pool\DbPool;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Exception;
 
 /**
  * Class Connection
@@ -22,7 +24,7 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $connection;
 
     /**
-     * @var \CloverSwoole\Database\ConnectionFactory
+     * @var ConnectionFactory
      */
     protected $factory;
 
@@ -30,11 +32,6 @@ class Connection extends BaseConnection implements ConnectionInterface
      * @var array
      */
     protected $config;
-
-//    /**
-//     * @var StdoutLoggerInterface
-//     */
-    protected $logger;
 
     protected $transaction = false;
 
@@ -44,7 +41,7 @@ class Connection extends BaseConnection implements ConnectionInterface
      * @param Container $container
      * @param DbPool $pool
      * @param array $config
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function __construct(Container $container, DbPool $pool, array $config)
     {
@@ -68,6 +65,10 @@ class Connection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name}(...$arguments);
     }
 
+    /**
+     * @return $this
+     * @throws Exception
+     */
     public function getActiveConnection()
     {
         if ($this->check()) {
@@ -75,22 +76,25 @@ class Connection extends BaseConnection implements ConnectionInterface
         }
 
         if (! $this->reconnect()) {
-            throw new \Exception('Connection reconnect failed.');
+            throw new Exception('Connection reconnect failed.');
         }
 
         return $this;
     }
 
+    /**
+     * 重连
+     * @return bool
+     */
     public function reconnect(): bool
     {
-        try{
-            $this->connection = $this->factory->make($this->config);
-        }catch (\Throwable $throwable){
-            var_dump($throwable -> getMessage());
-            var_dump($throwable -> getFile());
-            var_dump($throwable -> getTraceAsString());
-            exit();
-        }
+        /**
+         * 链接工厂实例创建一个连接
+         */
+        $this->connection = $this->factory->make($this->config);
+        /**
+         * 判断链接是否有效
+         */
         if ($this->connection instanceof Connection) {
             // Reset event dispatcher after db reconnect.
 //            if ($this->container->has(EventDispatcherInterface::class)) {

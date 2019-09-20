@@ -18,7 +18,6 @@ trait DbConnection
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
-
     public function selectOne($query, $bindings = [], $useReadPdo = true)
     {
         return $this->__call(__FUNCTION__, func_get_args());

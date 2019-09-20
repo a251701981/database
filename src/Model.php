@@ -1,6 +1,11 @@
 <?php
+
 namespace CloverSwoole\Database;
+
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Query\Builder;
+use Throwable;
 
 /**
  * Class Model
@@ -11,7 +16,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
 {
     /**
      * 获取容器
-     * @return \Illuminate\Container\Container|null
+     * @return Container|null
      */
     protected function getContainer()
     {
@@ -21,7 +26,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * 获取一个这个模型的连接
      * @return ConnectionInterface
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
+     * @throws Throwable
      */
     public function getConnection(): ConnectionInterface
     {
@@ -32,10 +38,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         /**
          * 创建连接解析器
          */
-        $resolver = $this->getContainer()->make(ConnectionResolver::class,['container'=>$this -> getContainer()]);
+        $resolver = $this->getContainer()->make(ConnectionResolver::class, ['container' => $this->getContainer()]);
         /**
          * 获取连接
-         * @var $resolver \CloverSwoole\Database\ConnectionResolver
+         * @var $resolver ConnectionResolver
          */
         return $resolver->connection($connectionName);
     }

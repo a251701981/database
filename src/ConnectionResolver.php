@@ -1,9 +1,10 @@
 <?php
+
 namespace CloverSwoole\Database;
 
-use Illuminate\Container\Container;
-use CloverSwoole\Database\ConnectionInterface;
 use CloverSwoole\Database\Pool\PoolFactory;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * 链接解析器
@@ -32,7 +33,7 @@ class ConnectionResolver extends \Illuminate\Database\ConnectionResolver
     /**
      * ConnectionResolver constructor.
      * @param Container $container
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function __construct(Container $container)
     {
@@ -43,14 +44,14 @@ class ConnectionResolver extends \Illuminate\Database\ConnectionResolver
         /**
          * 创建连接池工厂
          */
-        $this->factory = $container->make(PoolFactory::class,['container'=>$container]);
+        $this->factory = $container->make(PoolFactory::class, ['container' => $container]);
     }
 
     /**
      * 获取连接
      * @param null $name
-     * @return Connection|\Illuminate\Database\ConnectionInterface|mixed|null
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return Connection|ConnectionInterface|mixed|null
+     * @throws BindingResolutionException
      * @throws \Throwable
      */
     public function connection($name = null)
@@ -70,13 +71,13 @@ class ConnectionResolver extends \Illuminate\Database\ConnectionResolver
          */
         if (ContextManager::has($key)) {
             $connection = ContextManager::get($key);
-        }else{
+        } else {
             $connection = null;
         }
         /**
          * 判断链接是否已经建立
          */
-        if (! $connection instanceof ConnectionInterface) {
+        if (!$connection instanceof ConnectionInterface) {
             /**
              * 创建连接池
              */
@@ -107,6 +108,7 @@ class ConnectionResolver extends \Illuminate\Database\ConnectionResolver
          */
         return $connection;
     }
+
     /**
      * 获取上下文的key
      * @param $name

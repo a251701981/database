@@ -2,7 +2,9 @@
 
 namespace CloverSwoole\Database\Pool;
 
+use Exception;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * Class PoolFactory
@@ -33,7 +35,8 @@ class PoolFactory
      * 获取连接池
      * @param string $name
      * @return DbPool
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
+     * @throws Exception
      */
     public function getPool(string $name): DbPool
     {
@@ -47,7 +50,7 @@ class PoolFactory
          * 判断容器是否有效
          */
         if (!($this->container instanceof Container)) {
-            throw new \Exception('Container invalid');
+            throw new Exception('Container invalid');
         }
         /**
          * 创建连接池
