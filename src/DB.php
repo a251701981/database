@@ -2,12 +2,12 @@
 namespace CloverSwoole\Database;
 
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
+use CloverSwoole\Database\QueryBuilder;
 use Illuminate\Database\Query\Expression;
 
 /**
  * DB Helper.
- * @method static Builder table(string $table)
+ * @method static QueryBuilder table(string $table)
  * @method static Expression raw($value)
  * @method static selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
