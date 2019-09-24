@@ -4,6 +4,7 @@ namespace CloverSwoole\Database;
 use Illuminate\Container\Container;
 use CloverSwoole\Database\QueryBuilder;
 use Illuminate\Database\Query\Expression;
+use Generator;
 
 /**
  * DB Helper.
