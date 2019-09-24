@@ -1,8 +1,10 @@
 <?php
 
+use CloverSwoole\Database\CacheInterface;
 use Illuminate\Container\Container;
 use CloverSwoole\Database\ConfigInterface;
 use CloverSwoole\Database\ContainerManager;
+use Redis;
 
 include_once __DIR__."/../vendor/autoload.php";
 /**
@@ -30,21 +32,7 @@ class DbConfig implements ConfigInterface
                     'heartbeat' => -1,
                     'max_idle_time' => 60.00,
                 ],
-                'cache' => [
-                    'handler' => Hyperf\ModelCache\Handler\RedisHandler::class,
-                    'cache_key' => 'mc:%s:m:%s:%s:%s',
-                    'prefix' => 'default',
-                    'ttl' => 3600 * 24,
-                    'empty_model_ttl' => 600,
-                    'load_script' => true,
-                ],
-//            'commands' => [
-//                'db:model' => [
-//                    'path' => 'app/Model',
-//                    'force_casts' => true,
-//                    'inheritance' => 'Model',
-//                ],
-//            ],
+                'cache' => CacheHandler::class,
             ],
         ]
     ];
@@ -99,6 +87,48 @@ class DbConfig implements ConfigInterface
 }
 
 /**
+ * 缓存处理器
+ * Class CacheHandler
+ */
+class CacheHandler implements CacheInterface
+{
+    protected $config = [];
+    /**
+     * @var Redis
+     */
+    protected $redis = null;
+    public function __construct()
+    {
+        $this -> redis = new Redis();
+        $this -> redis -> connect('127.0.0.1',6379);
+        $config = [
+            'cache_key' => '{$sql}-{$bindings}', // querySql,$bindings
+            'prefix' => 'default',
+        ];
+    }
+    protected function getKey($query,$bindings)
+    {
+        return $query.serialize($bindings);
+    }
+    public function get($query,$bindings)
+    {
+        return unserialize($this -> redis -> get($this -> getKey($query,$bindings)));
+    }
+    public function set($query,$bindings,$data,int $rememberTime = -1)
+    {
+        return $this -> redis -> setex($this -> getKey($query,$bindings),$rememberTime,serialize($data));
+    }
+    public function has($query,$bindings):bool
+    {
+        return $this -> redis -> exists($this -> getKey($query,$bindings));
+    }
+    public function del($query,$bindings)
+    {
+        return $this -> redis -> del($this -> getKey($query,$bindings));
+    }
+}
+
+/**
  * 测试模型
  * Class Users
  */
@@ -122,9 +152,9 @@ try{
     ContainerManager::setContainer($container);
     /**
      * 查询数据
-     */
-//    $res = Users::where('id','>',0) -> get() -> toArray();
-    $res = \CloverSwoole\Database\DB::table('users') -> where('id','>',0) -> get();
+        */
+    $res = Users::remember(60) -> where('id','>',0) -> get() -> toArray();
+//    $res = \CloverSwoole\Database\DB::table('users') -> where('id','>',0) -> get();
     var_dump($res);
 }catch (\Throwable $throwable){
     var_dump('异常:'.$throwable);

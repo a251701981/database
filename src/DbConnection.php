@@ -1,6 +1,7 @@
 <?php
 namespace CloverSwoole\Database;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Expression;
 
 /**

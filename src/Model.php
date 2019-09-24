@@ -4,13 +4,13 @@ namespace CloverSwoole\Database;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Database\Query\Builder;
+use CloverSwoole\Database\QueryBuilder;
 use Throwable;
 
 /**
  * Class Model
  * @package CloverSwoole\Database
- * @mixin Builder
+ * @mixin QueryBuilder
  */
 class Model extends \Illuminate\Database\Eloquent\Model
 {

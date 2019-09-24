@@ -4,6 +4,7 @@ use Illuminate\Container\Container;
 use CloverSwoole\Database\Pool\DbPool;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Exception;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * Class Connection
@@ -12,7 +13,6 @@ use Exception;
 class Connection extends BaseConnection implements ConnectionInterface
 {
     use DbConnection;
-
     /**
      * @var DbPool
      */
